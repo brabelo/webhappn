@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Profiles</title>
+        {% include 'head_import.html' %}
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <h1>Happn Profiles <br><small>Enjoy</small></h1>
+                <!-- container -->
+                {% for rec in recs %}
+                    {% set sub = rec['notifier'] %}
+                    {% if sub['is_accepted'] %}
+                    <ul class="accordion">
+                        <li>
+                            <div class="col col_4 img-profile">
+                                {% set fimgs = sub['profiles'] %}
+                                {% set fphoto = fimgs[0]['url'] %}
+                                <img class="img-responsive img-custom profile-pic" alt="profile" src="{{ fphoto }}">
+                                <div class="edit-pic">
+                                    <a href="https://facebook.com/{{ sub['fb_id'] }}" target="_blank" class="fa fa-facebook"></a>
+                                </div>
+
+                                <div class="username">
+                                    <h2>{{ sub['first_name'] }} ,  {{ sub['age'] }}</h2>
+
+                                    <a href="/targetinfo/{{ sub['id'] }}" target="_blank" class="btn-o"> <i class="glyphicon glyphicon-thumbs-up"></i> Like </a>
+                                    <a href="/decline/{{ sub['id'] }}" target="_blank"  class="btn-o"> <i class="glyphicon glyphicon-thumbs-down"></i> Decline </a>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="link"><i class="fa fa-picture-o"></i>Photos <small>{{fimgs|length}}</small><i class="fa fa-chevron-down"></i></div>
+                            <ul class="submenu tz-gallery">
+                                <li class="photosgurdeep">
+                                    {% set imgs = sub['profiles'] %}
+                                        {% for img in imgs %}
+                                        <a class="lightbox" href="{{ img['url'] }}"><img class="img-responsive img-custom" alt="photos" src="{{ img['url'] }}"></a>
+                                    {% endfor %}
+                                    <a class="view-all" href="" target="_blank" >+</a>
+                                </li>
+                            </ul>
+                        </li>
+                        {% if rec['instagram_number_of_pictures'] %}
+                        <li>
+                            <div class="link"><i class="fa fa-picture-o"></i>Instagram <small>{{rec['instagram_number_of_pictures']}}</small><i class="fa fa-chevron-down"></i></div>
+                            <ul class="submenu tz-gallery">
+                                <li class="photosgurdeep">
+                                    {% set instagram_pictures = rec['instagram_pictures'] %}
+                                    {% for insta in instagram_pictures %}
+                                    {% set instagram_images = insta['images'] %}
+                                    {% set url_insta_img = instagram_images[2]['url'] %}
+                                        <a class="lightbox" href="{{ url_insta_img }}"><img class="img-responsive img-custom" alt="instagram" src="{{ url_insta_img }}"></a>
+                                    {% endfor %}
+                                </li>
+                            </ul>
+                        </li>
+                        {% endif %}
+                    </ul>
+                    {% endif %}
+                {% endfor %}
+                <!-- teste -->
+            </div>
+        </div>
+        <script type="text/javascript">
+        $(function() {
+            var Accordion = function(el, multiple) {
+                this.el = el || {};
+                this.multiple = multiple || false;
+
+                // Variables privadas
+                var links = this.el.find('.link');
+                // Evento
+                links.on('click', {el: this.el, multiple: this.multiple}, this.dropdown)
+            }
+
+            Accordion.prototype.dropdown = function(e) {
+                var $el = e.data.el;
+                    $this = $(this),
+                    $next = $this.next();
+
+                $next.slideToggle();
+                $this.parent().toggleClass('open');
+
+                if (!e.data.multiple) {
+                    $el.find('.submenu').not($next).slideUp().parent().removeClass('open');
+                };
+            }
+
+            var accordion = new Accordion($('.accordion'), false);
+        });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.8.1/baguetteBox.min.js"></script>
+        <script>
+            baguetteBox.run('.tz-gallery');
+        </script>
+    </body>
+</html>
